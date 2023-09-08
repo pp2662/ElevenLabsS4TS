@@ -62,6 +62,7 @@ class S4TSWorker(QRunnable):
 class ElevensLabS4TS(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(ElevensLabS4TS, self).__init__(*args, **kwargs)
+        self.tts = None
         self.threadpool = QtCore.QThreadPool()
         self.is_recording = False
         self.is_flattening = False
@@ -263,6 +264,8 @@ class ElevensLabS4TS(QMainWindow):
         self.s4ts('recorded.wav')
 
     def s4ts(self, file: str):
+        if self.tts is None:
+        raise RuntimeError("TTS has not been initialized. Make sure to enter a valid API key.")
         worker = S4TSWorker(file, self.tts, self.voice_combo.currentText())
         worker.signals.transcription_finished.connect(self.notify_transcription_done)
         worker.signals.tts_finished.connect(self.play_audio)
